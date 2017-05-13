@@ -16,18 +16,6 @@ class Ingredient {
 
 class RecipesController {
   constructor($firebaseAuth, $firebaseArray) {
-    var auth = $firebaseAuth();
-
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (!user) {
-        auth.$signInWithPopup("facebook").then(function(firebaseUser) {
-          console.log("Signed in as:", firebaseUser, firebaseUser.user.uid);
-        }).catch(function(error) {
-          console.log("Authentication failed:", error);
-        });
-      }
-    });
-
     const ref = firebase.database().ref().child("recipes");
     this.recipes = $firebaseArray(ref);
   }
@@ -79,6 +67,19 @@ class RecipeEditController {
   }
 }
 
+class LoginController {
+  constructor($state, $firebaseAuth) {
+    this.$state = $state;
+    this.$firebaseAuth = $firebaseAuth;
+  }
+
+  loginWithFacebook() {
+    this.$firebaseAuth().$signInWithPopup("facebook").then(() => {
+      this.$state.go('home');
+    });
+  }
+}
+
 angular.module('app', ['ui.router', 'firebase'])
   .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.when('', '/');
@@ -88,6 +89,23 @@ angular.module('app', ['ui.router', 'firebase'])
       url: '/',
       component: 'recipes'
     });
+
+    $stateProvider.state({
+      name: 'logout',
+      url: '/logout',
+      resolve: {
+        logout($firebaseAuth) {
+          return $firebaseAuth().$signOut();
+        }
+      }
+    });
+
+    $stateProvider.state({
+      name: 'login',
+      url: '/login',
+      component: 'login'
+    });
+
     $stateProvider.state({
       name: 'edit',
       url: '/edit/{id}',
@@ -98,6 +116,7 @@ angular.module('app', ['ui.router', 'firebase'])
         }
       }
     });
+
     $stateProvider.state({
       name: 'create',
       url: '/create',
@@ -121,4 +140,25 @@ angular.module('app', ['ui.router', 'firebase'])
     bindings: {
       id: '<'
     }
-  });
+  })
+  .component('login', {
+    templateUrl: '/templates/login.html',
+    controller: LoginController,
+    controllerAs: 'ctrl'
+  })
+
+  .run(function ($rootScope, $firebaseAuth, $state) {
+    $rootScope.$on('$locationChangeStart', () => {
+      if (!$firebaseAuth().$getAuth()) {
+        $state.go('login');
+      }
+    });
+
+    $rootScope.$on('$locationChangeSuccess', function () {
+      $firebaseAuth().$onAuthStateChanged(function (user) {
+        if (!user) {
+          $state.go('login')
+        }
+      })
+    });
+  })
