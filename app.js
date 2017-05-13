@@ -1,48 +1,110 @@
 class Recipe {
-  constructor(name = '', ingredients = [], unitsPerBatch = 1) {
+  constructor(name = '', ingredients = [], units = 1) {
     this.name = name;
     this.ingredients = ingredients;
-    this.unitsPerBatch = unitsPerBatch;
+    this.units = units;
   }
 }
 
 class Ingredient {
-  constructor(name = '', pricePerKilo = 1, quantityNeeded = 1) {
+  constructor(name = '', pricePerUnit = 1, quantityPerBatch = 1) {
     this.name = name;
-    this.pricePerKilo = pricePerKilo;
-    this.quantityNeeded = quantityNeeded;
+    this.pricePerUnit = pricePerUnit;
+    this.quantityPerBatch = quantityPerBatch;
   }
 }
 
 class RecipesController {
-  constructor() {
-    this.recipes = [
-      new Recipe("chicken")
-    ];
-  }
+  constructor($firebaseAuth, $firebaseArray) {
+    var auth = $firebaseAuth();
 
-  addRecipe(recipe) {
-    this.recipes.push(recipe);
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (!user) {
+        auth.$signInWithPopup("facebook").then(function(firebaseUser) {
+          console.log("Signed in as:", firebaseUser, firebaseUser.user.uid);
+        }).catch(function(error) {
+          console.log("Authentication failed:", error);
+        });
+      }
+    });
+
+    const ref = firebase.database().ref().child("recipes");
+    this.recipes = $firebaseArray(ref);
   }
 }
 
 class RecipeEditController {
-  constructor() {
-    this.id = 'meow';
+  constructor($firebaseArray, $state, $stateParams) {
+    this.$state = $state;
+    const id = $stateParams.id;
+
+    const ref = firebase.database().ref().child("recipes");
+    this.recipes = $firebaseArray(ref);
+
+    this.create = !id; // TODO context independent
+    this.recipe = new Recipe();
+
+    if (!this.create) {
+      this.recipes.$loaded().then(() => {
+        this.recipe = this.recipes.$getRecord(id);
+      });
+    }
+  }
+
+  save() {
+    if (this.create) {
+      this.recipes.$add(this.recipe);
+    } else {
+      this.recipes.$save(this.recipe);
+    }
+    this.$state.go('home');
+  }
+
+  totalPrice(ingredients) {
+    return this.stripInvalidIngredients(ingredients).reduce((total, ingredient) => {
+      return total + (ingredient.pricePerUnit * ingredient.quantityPerBatch);
+    }, 0);
+  }
+
+  pricePerUnit(ingredients) {
+    return this.totalPrice(ingredients) / this.recipe.units;
+  }
+
+  stripInvalidIngredients(ingredients) {
+    return ingredients.filter(ingredient => ingredient.pricePerUnit && ingredient.quantityPerBatch);
+  }
+
+  addIngredient() {
+    this.recipe.ingredients.push(new Ingredient());
   }
 }
 
 angular.module('app', ['ui.router', 'firebase'])
   .config(function ($stateProvider) {
     $stateProvider.state({
-      name: 'default',
-      url: '',
+      name: 'home',
+      url: '/home',
       component: 'recipes'
     });
     $stateProvider.state({
       name: 'edit',
       url: '/edit/{id}',
-      component: 'edit'
+      component: 'edit',
+      resolve: {
+        id($transition$) {
+          return $transition$.params().id;
+        }
+      }
+    });
+    $stateProvider.state({
+      name: 'create',
+      url: '/create',
+      component: 'edit',
+      resolve: {
+        id() {
+          return -1;
+        }
+      }
     });
   })
   .component('recipes', {
@@ -51,7 +113,10 @@ angular.module('app', ['ui.router', 'firebase'])
     controllerAs: 'ctrl'
   })
   .component('edit', {
-    template: '<div>{{ ctrl.id }}</div>',
+    templateUrl: '/templates/edit.html',
     controller: RecipeEditController,
-    controllerAs: 'ctrl'
+    controllerAs: 'ctrl',
+    bindings: {
+      id: '<'
+    }
   });

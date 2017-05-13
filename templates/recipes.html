@@ -1,9 +1,9 @@
 <div>
-    <a ng-click="ctrl.goToAddRecipe()">Add Recipe</a>
+    <a ui-sref="create">Add Recipe</a>
 </div>
 
 <ul>
     <li ng-repeat="recipe in ctrl.recipes">
-        <a ui-sref="edit({ id: recipe.name })">{{ recipe.name }}</a>
+        <a ui-sref="edit({ id: recipe.$id })">{{ recipe.name }}</a>
     </li>
 </ul>
