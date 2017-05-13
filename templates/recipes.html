@@ -1,0 +1,9 @@
+<div>
+    <a ng-click="ctrl.goToAddRecipe()">Add Recipe</a>
+</div>
+
+<ul>
+    <li ng-repeat="recipe in ctrl.recipes">
+        {{ recipe.name }}
+    </li>
+</ul>
