@@ -4,6 +4,6 @@
 
 <ul>
     <li ng-repeat="recipe in ctrl.recipes">
-        {{ recipe.name }}
+        <a ui-sref="edit({ id: recipe.name })">{{ recipe.name }}</a>
     </li>
 </ul>

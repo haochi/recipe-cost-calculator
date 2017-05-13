@@ -2,9 +2,21 @@
     <head>
     </head>
     <body ng-app="app">
-        <recipes></recipes>
+        <div ui-view></div>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-        <script src="//unpkg.com/angular-ui-router@0.3.1/release/angular-ui-router.js"></script>
+        <script src="https://unpkg.com/angular-ui-router@1.0.3/release/angular-ui-router.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
+        <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyDVf1X1C6ZLsBA8mz8YTQd30AoYKM4EIFk",
+            authDomain: "giza-cceb6.firebaseapp.com",
+            databaseURL: "https://giza-cceb6.firebaseio.com",
+            projectId: "giza-cceb6",
+            storageBucket: "giza-cceb6.appspot.com",
+            messagingSenderId: "598274616571"
+        });
+        </script>
+        <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
         <script src="app.js"></script>
     </body>
 </html>
