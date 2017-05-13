@@ -80,10 +80,12 @@ class RecipeEditController {
 }
 
 angular.module('app', ['ui.router', 'firebase'])
-  .config(function ($stateProvider) {
+  .config(function ($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.when('', '/');
+
     $stateProvider.state({
       name: 'home',
-      url: '/home',
+      url: '/',
       component: 'recipes'
     });
     $stateProvider.state({
