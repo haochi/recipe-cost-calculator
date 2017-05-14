@@ -1,42 +1,80 @@
 <form ng-submit="ctrl.save()">
-    <div>
-        <label>Name</label>
-        <input type="text" ng-model="ctrl.recipe.name"/>
-    </div>
-    <div>
-        <label>Units Per Batch</label>
-        <input type="number" ng-model="ctrl.recipe.units" min="1" />
-    </div>
 
-    <div>
-        <a ng-click="ctrl.addIngredient()">Add Ingredient</a>
-    </div>
-    <div>
-        <div ng-repeat="ingredient in ctrl.recipe.ingredients">
-            <div>
-                <label>Ingredient Name</label>
-                <input type="text" ng-model="ingredient.name" />
-            </div>
-            <div>
-                <label>Price/Unit</label>
-                <input type="number" ng-model="ingredient.pricePerUnit" min="0" step="any" />
-            </div>
-            <div>
-                <label>Quantity of Ingredient/Batch</label>
-                <input type="number" ng-model="ingredient.quantityPerBatch" min="0" step="any" />
-            </div>
+    <div class="container">
+        <div class="field">
+            <label class="label">Name</label>
+            <p class="control">
+                <input class="input" type="text" ng-model="ctrl.recipe.name" />
+            </p>
+        </div>
+
+        <div class="field">
+            <label class="label">Units Per Batch</label>
+            <p class="control">
+                <input class="input" type="number" ng-model="ctrl.recipe.units" min="1" />
+            </p>
         </div>
     </div>
 
-    <div>
-        <label>Total Price</label>
-        <span ng-bind="ctrl.totalPrice(ctrl.recipe.ingredients)"></span>
-    </div>   
+    <div class="container">
+        <div class="card" style="margin-bottom: 1em;" ng-repeat="ingredient in ctrl.recipe.ingredients">
+            <div class="card-content">
+                <div class="content">
+                    <div class="field">
+                        <label class="label">Ingredient Name</label>
+                        <p class="control">
+                            <input class="input" type="text" ng-model="ingredient.name" />
+                        </p>
+                    </div>
 
-    <div>
-        <label>Price/Unit</label>
-        <span ng-bind="ctrl.pricePerUnit(ctrl.recipe.ingredients)"></span>
+                    <div class="field">
+                        <label class="label">Price/Unit</label>
+                        <p class="control">
+                            <input class="input" type="number" ng-model="ingredient.pricePerUnit" min="0" step="any" />
+                        </p>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Quantity of Ingredient/Batch</label>
+                        <p class="control">
+                            <input class="input" type="number" ng-model="ingredient.quantityPerBatch" min="0" step="any" />
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <footer class="card-footer">
+                <a class="card-footer-item" ng-click="ctrl.removeIngredient($index)">Delete</a>
+            </footer>
+        </div>
     </div>
 
-    <input type="submit" value="Save" />
+    <div class="container">
+        <a class="button is-info" ng-click="ctrl.addIngredient()">
+            <span class="icon">
+                <i class="fa fa-plus"></i>
+            </span>
+            <span>Add Ingredient</span>
+        </a>
+    </div>
+
+    <div class="container">
+        <nav class="level">
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Total</p>
+                    <p class="title" ng-bind="ctrl.totalPrice(ctrl.recipe.ingredients) | currency"></p>
+                </div>
+            </div>
+            <div class="level-item has-text-centered">
+                <div>
+                    <p class="heading">Price/Unit</p>
+                    <p class="title" ng-bind="ctrl.pricePerUnit(ctrl.recipe.ingredients) | currency"></p>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container">
+        <input type="submit" class="button is-success" value="Save" />
+    </div>
 </form>

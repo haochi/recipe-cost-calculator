@@ -15,15 +15,33 @@ class Ingredient {
 }
 
 class RecipesController {
-  constructor($firebaseAuth, $firebaseArray) {
+  constructor($firebaseAuth, $firebaseArray, recipeCostService) {
+    this.recipeCostService = recipeCostService;
+
     const ref = firebase.database().ref().child("recipes");
     this.recipes = $firebaseArray(ref);
+  }
+
+  remove(recipe) {
+    if (confirm(`Are you sure you want to delete "${recipe.name}"?`)) {
+      this.recipes.$remove(recipe);
+    }
+  }
+
+  totalPrice(recipe) {
+    return this.recipeCostService.totalPrice(recipe.ingredients);
+  }
+
+  pricePerUnit(recipe) {
+    return this.recipeCostService.totalPrice(recipe.ingredients) / recipe.units;
   }
 }
 
 class RecipeEditController {
-  constructor($firebaseArray, $state, $stateParams) {
+  constructor($firebaseArray, $state, $stateParams, recipeCostService) {
     this.$state = $state;
+    this.recipeCostService = recipeCostService;
+
     const id = $stateParams.id;
 
     const ref = firebase.database().ref().child("recipes");
@@ -49,21 +67,31 @@ class RecipeEditController {
   }
 
   totalPrice(ingredients) {
+    return this.recipeCostService.totalPrice(ingredients);
+  }
+
+  pricePerUnit(ingredients) {
+    return this.recipeCostService.totalPrice(ingredients) / this.recipe.units;
+  }
+
+  addIngredient() {
+    this.recipe.ingredients.push(new Ingredient());
+  }
+
+  removeIngredient(index) {
+    this.recipe.ingredients.splice(index, 1);
+  }
+}
+
+class RecipeCostService {
+  totalPrice(ingredients) {
     return this.stripInvalidIngredients(ingredients).reduce((total, ingredient) => {
       return total + (ingredient.pricePerUnit * ingredient.quantityPerBatch);
     }, 0);
   }
 
-  pricePerUnit(ingredients) {
-    return this.totalPrice(ingredients) / this.recipe.units;
-  }
-
   stripInvalidIngredients(ingredients) {
     return ingredients.filter(ingredient => ingredient.pricePerUnit && ingredient.quantityPerBatch);
-  }
-
-  addIngredient() {
-    this.recipe.ingredients.push(new Ingredient());
   }
 }
 
@@ -128,6 +156,7 @@ angular.module('app', ['ui.router', 'firebase'])
       }
     });
   })
+  .service('recipeCostService', RecipeCostService)
   .component('recipes', {
     templateUrl: '/templates/recipes.html',
     controller: RecipesController,

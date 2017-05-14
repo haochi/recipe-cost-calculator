@@ -1,9 +1,40 @@
 <div>
-    <a ui-sref="create">Add Recipe</a>
-</div>
+    <div class="content">
+        <h1>Recipes</h1>
+    </div>
+    <div class="card" ng-repeat="recipe in ctrl.recipes">
+        <div class="card-content">
+            <div class="content" ng-bind="recipe.name"></div>
+            <nav class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Total</p>
+                        <p class="title" ng-bind="ctrl.totalPrice(recipe) | currency"></p>
+                    </div>
+                </div>
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Price/Unit</p>
+                        <p class="title" ng-bind="ctrl.pricePerUnit(recipe) | currency"></p>
+                    </div>
+                </div>
+            </nav>
+        </div>
 
-<ul>
-    <li ng-repeat="recipe in ctrl.recipes">
-        <a ui-sref="edit({ id: recipe.$id })">{{ recipe.name }}</a>
-    </li>
-</ul>
+        <footer class="card-footer">
+            <p class="card-footer-item">
+                <a class="icon" ui-sref="edit({ id: recipe.$id })">
+                    <i class="fa fa-pencil"></i>
+                    <span>Edit</span>
+                </a>
+            </p>
+
+            <p class="card-footer-item">
+                <span class="icon" ng-click="ctrl.remove(recipe)">
+                    <a class="fa fa-trash" ></a>
+                    <span>Delete</span>
+                </span>
+            </p>
+        </footer>
+    </div>
+</div>

@@ -1,16 +1,37 @@
 <html>
-    <head>
-    </head>
-    <body ng-app="app">
-        <div>
-            <a ui-sref="home">Home</a>
-            <a ui-sref="logout">Log Out</a>
+
+<head>
+    <title>Recipe Cost Calculator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+
+    </style>
+</head>
+
+<body ng-app="app">
+    <nav class="nav has-shadow">
+        <div class="container">
+            <div class="nav-left">
+                <a ui-sref="home" class="nav-item">Home</a>
+                <a ui-sref="create" class="nav-item">Add Recipe</a>
+            </div>
+            <div class="nav-right nav-menu">
+                <a ui-sref="logout" class="nav-item">Log out</a>
+            </div>
         </div>
-        <div ui-view></div>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-        <script src="https://unpkg.com/angular-ui-router@1.0.3/release/angular-ui-router.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
-        <script>
+    </nav>
+    <div class="section">
+        <div class="container">
+            <div ui-view></div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="https://unpkg.com/angular-ui-router@1.0.3/release/angular-ui-router.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
+    <script>
         firebase.initializeApp({
             apiKey: "AIzaSyDVf1X1C6ZLsBA8mz8YTQd30AoYKM4EIFk",
             authDomain: "giza-cceb6.firebaseapp.com",
@@ -19,8 +40,9 @@
             storageBucket: "giza-cceb6.appspot.com",
             messagingSenderId: "598274616571"
         });
-        </script>
-        <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
-        <script src="app.js"></script>
-    </body>
+    </script>
+    <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
 </html>
